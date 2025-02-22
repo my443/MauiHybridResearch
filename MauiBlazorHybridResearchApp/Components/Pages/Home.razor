@@ -1,0 +1,69 @@
+﻿@page "/"
+@using System.Collections.Generic
+@using System.Linq
+@using MauiBlazorHybridResearchApp.Models
+
+<h3>Todo List</h3>
+
+<input @bind="newTodo" placeholder="Enter a todo item" @onkeypress="HandleKeyPress" /> 
+<button @onclick="AddTodo">Add</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th width="10%">Completed</th>
+            <th width="75%">Title</th>
+            <th width="15%"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var todo in todos)
+        {
+            <tr>
+                <td ><input type="checkbox" @bind="todo.IsCompleted" /></td>
+                <td >@todo.Title</td>
+                <td><button @onclick="() => RemoveTodo(todo.Id)">Remove</button></td>
+            </tr>
+        }
+    </tbody</table>
+
+@* <ul>  *@
+@*     @foreach (var todo in todos) *@
+@*     {  *@
+@*         <li>  *@
+@*             <input type="checkbox" @bind="todo.IsCompleted" />              *@
+@*             <span>@todo.Title</span>  *@
+@*             <button @onclick="() => RemoveTodo(todo.Id)">Remove</button>  *@
+@*         </li>  *@
+@*     }  </ul> *@
+
+@code {
+    private List<TodoItem> todos = new List<TodoItem>();
+    private string newTodo;
+
+    private void AddTodo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            todos.Add(new TodoItem { Title = newTodo });
+            newTodo = string.Empty;
+        }
+    }
+
+    private void RemoveTodo(Guid id)
+    {
+        var todo = todos.FirstOrDefault(t => t.Id == id);
+        if (todo != null)
+        {
+            todos.Remove(todo);
+        }
+    }
+
+    private void HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            AddTodo();
+        }
+    }
+}
